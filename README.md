@@ -16,7 +16,7 @@ MariGames is a small website with simple, visual learning games **in English** f
 | **Animals** | "Find the dog" / "Where is the cow?" – tap the right animal |
 | **Shapes** | "Find the circle" – circle, square, triangle, star |
 | **Fruits** | "Find the apple" – apple, banana, orange, strawberry |
-| **Hidden Colors** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. 11 rounds, one per food (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), in random order, then a "Great job!" screen with **Play again** |
+| **Hidden Colors** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. When the food is found the round stops (no timer) until the child taps the big → button. 11 rounds, one per food (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), in random order, then a "Great job!" screen with **Play again** |
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.

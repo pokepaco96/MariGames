@@ -317,6 +317,37 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   animation: pop-in 0.45s ease-out both;
 }
 
+.hc-grid.is-locked .hc-tile { cursor: default; }
+.hc-grid.is-locked .hc-tile:not(.is-open):active .hc-cover { transform: none; }
+
+/* Round completed: praise + big → button, in place of the instruction. */
+.hc-round .prompt { min-height: 90px; } /* same height in both states: no layout jump */
+.hc-done { animation: pop-in 0.35s ease-out both; }
+.hc-done-text {
+  background: var(--white);
+  color: var(--yes);
+  border: 4px solid var(--yes);
+  border-radius: 999px;
+  padding: 4px 28px;
+  box-shadow: var(--shadow);
+  font-size: clamp(34px, 7vw, 52px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.hc-next {
+  width: 104px;
+  height: 84px;
+  border-radius: 999px;
+  background: var(--yes);
+  color: var(--white);
+  box-shadow: 0 6px 0 #2e7d32;
+  display: grid;
+  place-items: center;
+}
+.hc-next svg { width: 56px; height: 56px; animation: nudge 1.6s ease-in-out 0.6s infinite; } /* only the arrow moves; the tap area stays still */
+.hc-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #2e7d32; }
+@keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
 .hc-end-card {
   background: var(--white);
   border-radius: var(--radius);
@@ -358,6 +389,8 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   .round { gap: 12px; padding: 8px 0; }
   .hc-progress { font-size: 24px; }
   .feedback { padding: 12px 24px; }
+  .hc-done-text { font-size: 24px; padding: 6px 14px; border-width: 3px; }
+  .hc-next { width: 84px; height: 60px; }
+  .hc-round .prompt { min-height: 60px; }
+  .hc-next svg { width: 40px; height: 40px; }
 }
-/* Keep the found food visible: show feedback over the instruction instead. */
-.game-hidden-colors .feedback { top: 22%; }

@@ -1,24 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SpeakButton from '../../components/SpeakButton.jsx';
 import { useGame } from '../../context/GameContext.jsx';
 import { speak } from '../../utils/sound.js';
 import { PROMPT, makeGame } from './game.js';
 
-const NEXT_ROUND_DELAY = 1300;
-
 // 12 colored tiles, one hides a food. Tapped tiles disappear until the food is found.
+// Then the round waits (no timer) until the child taps the big → button.
 // 11 rounds (one per food), then a "Play again" screen.
 export default function HiddenColors({ onCorrect, onBack }) {
   const { stars } = useGame();
   const [rounds, setRounds] = useState(() => makeGame());
   const [roundIndex, setRoundIndex] = useState(0);
   const [opened, setOpened] = useState([]);
-  const [found, setFound] = useState(false);
+  const [praise, setPraise] = useState(null); // set = round completed, waiting for →
   const [startStars, setStartStars] = useState(stars);
-  const timer = useRef(null);
 
   const finished = roundIndex >= rounds.length;
   const round = rounds[roundIndex];
+  const roundCompleted = praise !== null;
 
   useEffect(() => {
     const text = finished ? 'Great job! You found them all!' : PROMPT;
@@ -26,23 +25,17 @@ export default function HiddenColors({ onCorrect, onBack }) {
     return () => clearTimeout(t);
   }, [roundIndex, rounds, finished]);
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  const open = (tile) => {
+    if (roundCompleted || opened.includes(tile.id)) return;
+    setOpened((ids) => [...ids, tile.id]);
+    if (tile.id === round.foodTile) setPraise(onCorrect());
+  };
 
-  const open = useCallback(
-    (tile) => {
-      if (found || opened.includes(tile.id)) return;
-      setOpened((ids) => [...ids, tile.id]);
-      if (tile.id !== round.foodTile) return;
-      setFound(true);
-      onCorrect();
-      timer.current = setTimeout(() => {
-        setRoundIndex((i) => i + 1);
-        setOpened([]);
-        setFound(false);
-      }, NEXT_ROUND_DELAY);
-    },
-    [found, opened, round, onCorrect]
-  );
+  const next = () => {
+    setRoundIndex((i) => i + 1);
+    setOpened([]);
+    setPraise(null);
+  };
 
   const playAgain = () => {
     setRounds(makeGame());
@@ -75,14 +68,27 @@ export default function HiddenColors({ onCorrect, onBack }) {
 
   return (
     <div className="round hc-round">
-      <div className="prompt">
-        <h1 className="prompt-text">{PROMPT}</h1>
-        <SpeakButton text={PROMPT} />
-      </div>
+      {roundCompleted ? (
+        <div className="prompt hc-done">
+          <div className="hc-done-text" role="status">
+            <span aria-hidden="true">⭐</span> {praise}
+          </div>
+          <button type="button" className="hc-next" aria-label="Continue" onClick={next}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      ) : (
+        <div className="prompt">
+          <h1 className="prompt-text">{PROMPT}</h1>
+          <SpeakButton text={PROMPT} />
+        </div>
+      )}
       <div className="hc-progress" aria-label={`Round ${roundIndex + 1} of ${rounds.length}`}>
         {roundIndex + 1} / {rounds.length}
       </div>
-      <div className="hc-grid">
+      <div className={`hc-grid ${roundCompleted ? 'is-locked' : ''}`}>
         {round.tiles.map((tile) => {
           const isOpen = opened.includes(tile.id);
           const hasFood = tile.id === round.foodTile;
@@ -95,7 +101,7 @@ export default function HiddenColors({ onCorrect, onBack }) {
               data-color={tile.color.name}
               data-food={hasFood ? round.food.id : 'empty'}
               aria-label={isOpen ? (hasFood ? round.food.name : 'empty') : tile.color.name}
-              aria-disabled={isOpen}
+              aria-disabled={isOpen || roundCompleted}
               onClick={() => open(tile)}
             >
               <span className="hc-cover" aria-hidden="true" />

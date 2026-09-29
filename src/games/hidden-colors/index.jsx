@@ -6,4 +6,5 @@ export default {
   icon: '🎁',
   color: '#FD8AAB',
   Component: HiddenColors,
+  inlineFeedback: true,
 };

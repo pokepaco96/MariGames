@@ -18,13 +18,16 @@ export default function GamePage({ game, onBack }) {
     timer.current = setTimeout(() => setMessage(null), 1400);
   }, []);
 
+  // Returns the praise text. Games with `inlineFeedback` show it themselves
+  // instead of the floating message.
   const onCorrect = useCallback(() => {
     const text = pick(successMessages);
     addStar();
     playSuccess();
     setTimeout(() => speak(text), 450);
-    show('success', text);
-  }, [addStar, show]);
+    if (!game.inlineFeedback) show('success', text);
+    return text;
+  }, [game, addStar, show]);
 
   const onTryAgain = useCallback(() => {
     const text = pick(tryAgainMessages);
