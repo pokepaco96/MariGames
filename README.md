@@ -16,7 +16,7 @@ MariGames is a small website with simple, visual learning games **in English** f
 | **Animals** | "Find the dog" / "Where is the cow?" – tap the right animal |
 | **Shapes** | "Find the circle" – circle, square, triangle, star |
 | **Fruits** | "Find the apple" – apple, banana, orange, strawberry |
-| **Hidden Colors** | "Find the banana" – foods hide behind big colored cards; tap cards to flip them until you find it (6 cards, then 8) |
+| **Hidden Colors** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. 11 rounds, one per food (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), in random order, then a "Great job!" screen with **Play again** |
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
@@ -24,7 +24,7 @@ The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
 ## Technology
 
 - [React](https://react.dev) 18
-- [Vite](https://vite.dev) 5
+- [Vite](https://vite.dev) 6
 - Plain JavaScript and CSS (no UI libraries)
 - Web Audio API for sound effects, Speech Synthesis API for spoken words
 
@@ -48,9 +48,13 @@ npm run preview   # serves dist/ locally
 
 ## Tests
 
-End-to-end tests use [Playwright](https://playwright.dev) (dev dependency only) and play every game
-on a small phone (320×568), a tablet (768×1024) and a desktop (1280×800): right and wrong answers,
-stars, back to home, Sound On/Off, the 👂 button and console errors.
+Tests use [Playwright](https://playwright.dev) (dev dependency only):
+
+- `tests/logic/` – pure logic tests for Hidden Colors (12 tiles, 2 of each color, 11 foods once each,
+  randomization) using a seeded random generator, so they are deterministic.
+- `tests/*.spec.js` – browser tests that play every game on a small phone (320×568), a tablet (768×1024)
+  and a desktop (1280×800): right and wrong answers, stars, a full 11-round Hidden Colors game, Play again,
+  back to home, Sound On/Off, the 👂 button, layout (no horizontal scroll) and console errors.
 
 ```bash
 npx playwright install chromium   # first time only
@@ -78,8 +82,9 @@ src/
   main.jsx             # entry point
   components/          # shared UI: TopBar, RoundGame, ChoiceButton, Feedback, ...
   context/             # GameContext: stars + sound on/off
-  data/                # vocabulary: animals, colors, shapes, fruits, feedback words
+  data/                # vocabulary: animals, colors, shapes, fruits, foods, feedback words
   games/               # one folder per game + registry.js
+                       #   hidden-colors/game.js = pure round/random logic (testable)
   pages/               # Home and GamePage
   styles/              # global.css
   utils/               # random helpers, sound/speech

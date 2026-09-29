@@ -224,12 +224,13 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   transform: translate(-50%, -50%);
   padding: 14px 40px;
   border-radius: 999px;
-  font-size: clamp(40px, 9vw, 72px);
+  font-size: clamp(30px, 9vw, 72px);
   font-weight: 800;
   color: var(--white);
   box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18);
   pointer-events: none;
   white-space: nowrap;
+  max-width: calc(100vw - 24px);
   animation: feedback-in 1.4s ease-out both;
   z-index: 10;
 }
@@ -262,61 +263,85 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
 }
 
 /* ---------- Hidden Colors ---------- */
-.hidden-grid {
+.hc-progress {
+  background: var(--white);
+  border-radius: 999px;
+  padding: 2px 22px;
+  font-size: 28px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  opacity: 0.9;
+}
+.hc-grid {
   display: grid;
-  gap: clamp(10px, 2.5vw, 20px);
-  width: 100%;
-  max-width: 820px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(8px, 1.6vw, 16px);
+  /* 2 rows of 6; shrink on short screens so both rows stay visible */
+  width: min(100%, 1000px, max(560px, calc((100dvh - 270px) * 3)));
 }
-.hidden-grid-8 { grid-template-columns: repeat(4, 1fr); max-width: 960px; }
-@media (max-width: 560px) {
-  .hidden-grid,
-  .hidden-grid-8 { grid-template-columns: repeat(2, 1fr); max-width: 380px; }
+@media (orientation: portrait) and (max-width: 900px) {
+  .hc-grid { grid-template-columns: repeat(4, 1fr); width: min(100%, 720px); }
 }
-.hidden-card {
-  aspect-ratio: 1;
-  min-height: 96px;
-  padding: 0;
-  background: none;
-  perspective: 800px;
+@media (max-width: 520px) {
+  /* 3 x 4 on phones, sized so all 4 rows fit on screen */
+  .hc-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(100%, 420px, max(260px, calc((100dvh - 210px) * 0.75))); }
 }
-.hidden-card-inner {
+.hc-tile {
   position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.5s ease-out;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: inset 0 0 0 3px #efe6cc;
+  container-type: size;
 }
-.hidden-card.is-open .hidden-card-inner { transform: rotateY(180deg); }
-.hidden-card-front,
-.hidden-card-back {
+.hc-cover {
   position: absolute;
   inset: 0;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  border-radius: inherit;
+  background: var(--tile);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.12), 0 4px 0 rgba(0, 0, 0, 0.12);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.hc-tile:not(.is-open):active .hc-cover { transform: scale(0.95); }
+.hc-tile.is-open { cursor: default; }
+.hc-tile.is-open .hc-cover { opacity: 0; transform: scale(0.9); pointer-events: none; }
+.hc-tile.is-found { box-shadow: inset 0 0 0 5px var(--yes); }
+.hc-food {
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
-}
-.hidden-card-front {
-  background: var(--card-color);
-  border: 5px solid var(--white);
-  background-image: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.35) 0 18%, transparent 19%);
-}
-.hidden-card-back {
-  background: var(--white);
-  border: 5px solid var(--card-color);
-  transform: rotateY(180deg);
-  font-size: clamp(56px, 12vw, 96px);
+  font-size: 62cqmin;
   line-height: 1;
+  animation: pop-in 0.45s ease-out both;
 }
-.hidden-card:not(.is-open):active .hidden-card-inner { transform: scale(0.95); }
-.hidden-card.is-open:not(.is-found) { opacity: 0.8; }
-.hidden-card.is-found { animation: celebrate 0.8s ease-out 0.4s; }
-.hidden-card.is-found .hidden-card-back { border-color: var(--yes); }
+
+.hc-end-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px clamp(20px, 5vw, 56px);
+  text-align: center;
+  max-width: 100%;
+}
+.hc-end-emoji { font-size: 80px; line-height: 1; animation: pop-in 0.6s ease-out both; }
+.hc-end-title { margin: 8px 0 0; font-size: clamp(44px, 10vw, 72px); line-height: 1.1; }
+.hc-end-text { margin: 4px 0 12px; font-size: clamp(26px, 6vw, 38px); font-weight: 800; }
+.hc-end-stars { font-size: 48px; font-weight: 800; margin-bottom: 16px; }
+.hc-end-buttons { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+.big-btn {
+  min-height: 80px;
+  padding: 10px 32px;
+  border-radius: 999px;
+  font-size: clamp(28px, 6vw, 36px);
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+.big-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); }
+.big-btn-play { background: var(--yes); color: var(--white); }
+.big-btn-home { background: #ffd84d; border: 4px solid var(--ink); }
 
 /* ---------- Small phones ---------- */
 .stars { white-space: nowrap; }
@@ -325,3 +350,14 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   .topbar-spacer { width: 60px; }
   .stars { font-size: 28px; padding: 6px 14px; min-width: 0; }
 }
+@media (max-width: 380px) {
+  .prompt-text { font-size: 24px; padding: 6px 14px; }
+  .speak-btn { width: 52px; height: 52px; font-size: 28px; }
+  .prompt { gap: 8px; }
+  .game-hidden-colors .prompt { flex-wrap: nowrap; }
+  .round { gap: 12px; padding: 8px 0; }
+  .hc-progress { font-size: 24px; }
+  .feedback { padding: 12px 24px; }
+}
+/* Keep the found food visible: show feedback over the instruction instead. */
+.game-hidden-colors .feedback { top: 22%; }

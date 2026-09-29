@@ -11,7 +11,7 @@
 //     makeRound(previous) {...}  // returns one round (see components/RoundGame.jsx)
 //   }
 // Games that need a different mechanic (memory, puzzles...) can export
-// `Component` instead of `makeRound`; it receives { game, onCorrect, onTryAgain }
+// `Component` instead of `makeRound`; it receives { game, onCorrect, onTryAgain, onBack }
 // (see hidden-colors/ for an example).
 import countAnimals from './count-animals/index.jsx';
 import findColor from './find-color/index.jsx';

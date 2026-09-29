@@ -1,72 +1,109 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SpeakButton from '../../components/SpeakButton.jsx';
+import { useGame } from '../../context/GameContext.jsx';
 import { speak } from '../../utils/sound.js';
-import { makeRound } from './round.js';
+import { PROMPT, makeGame } from './game.js';
 
-const NEXT_ROUND_DELAY = 1800;
+const NEXT_ROUND_DELAY = 1300;
 
-// Colored cards hide foods. Tap cards to open them until you find the target.
-export default function HiddenColors({ onCorrect, onTryAgain }) {
-  const [roundsWon, setRoundsWon] = useState(0);
-  const [round, setRound] = useState(() => makeRound(null, 0));
+// 12 colored tiles, one hides a food. Tapped tiles disappear until the food is found.
+// 11 rounds (one per food), then a "Play again" screen.
+export default function HiddenColors({ onCorrect, onBack }) {
+  const { stars } = useGame();
+  const [rounds, setRounds] = useState(() => makeGame());
+  const [roundIndex, setRoundIndex] = useState(0);
   const [opened, setOpened] = useState([]);
-  const [solved, setSolved] = useState(false);
+  const [found, setFound] = useState(false);
+  const [startStars, setStartStars] = useState(stars);
   const timer = useRef(null);
 
+  const finished = roundIndex >= rounds.length;
+  const round = rounds[roundIndex];
+
   useEffect(() => {
-    const t = setTimeout(() => speak(round.prompt), 350);
+    const text = finished ? 'Great job! You found them all!' : PROMPT;
+    const t = setTimeout(() => speak(text), finished ? 900 : 350);
     return () => clearTimeout(t);
-  }, [round]);
+  }, [roundIndex, rounds, finished]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const open = useCallback(
-    (card) => {
-      if (solved || opened.includes(card.id)) return;
-      setOpened((ids) => [...ids, card.id]);
-      if (card.food === round.target) {
-        setSolved(true);
-        onCorrect();
-        timer.current = setTimeout(() => {
-          const won = roundsWon + 1;
-          setRoundsWon(won);
-          setRound(makeRound(round, won));
-          setOpened([]);
-          setSolved(false);
-        }, NEXT_ROUND_DELAY);
-      } else {
-        onTryAgain();
-      }
+    (tile) => {
+      if (found || opened.includes(tile.id)) return;
+      setOpened((ids) => [...ids, tile.id]);
+      if (tile.id !== round.foodTile) return;
+      setFound(true);
+      onCorrect();
+      timer.current = setTimeout(() => {
+        setRoundIndex((i) => i + 1);
+        setOpened([]);
+        setFound(false);
+      }, NEXT_ROUND_DELAY);
     },
-    [solved, opened, round, roundsWon, onCorrect, onTryAgain]
+    [found, opened, round, onCorrect]
   );
 
-  return (
-    <div className="round">
-      <div className="prompt">
-        <h1 className="prompt-text">{round.prompt}</h1>
-        <SpeakButton text={round.prompt} />
+  const playAgain = () => {
+    setRounds(makeGame());
+    setRoundIndex(0);
+    setStartStars(stars);
+  };
+
+  if (finished) {
+    return (
+      <div className="round hc-end">
+        <div className="hc-end-card">
+          <div className="hc-end-emoji" aria-hidden="true">🎉</div>
+          <h1 className="hc-end-title">Great job!</h1>
+          <p className="hc-end-text">You found them all!</p>
+          <div className="hc-end-stars" aria-label={`${stars - startStars} stars`}>
+            <span aria-hidden="true">⭐</span> {stars - startStars}
+          </div>
+          <div className="hc-end-buttons">
+            <button type="button" className="big-btn big-btn-play" onClick={playAgain}>
+              <span aria-hidden="true">🔄</span> Play again
+            </button>
+            <button type="button" className="big-btn big-btn-home" onClick={onBack}>
+              <span aria-hidden="true">🏠</span> Home
+            </button>
+          </div>
+        </div>
       </div>
-      <div className={`hidden-grid hidden-grid-${round.cards.length}`}>
-        {round.cards.map((card) => {
-          const isOpen = opened.includes(card.id);
-          const isTarget = card.food === round.target;
+    );
+  }
+
+  return (
+    <div className="round hc-round">
+      <div className="prompt">
+        <h1 className="prompt-text">{PROMPT}</h1>
+        <SpeakButton text={PROMPT} />
+      </div>
+      <div className="hc-progress" aria-label={`Round ${roundIndex + 1} of ${rounds.length}`}>
+        {roundIndex + 1} / {rounds.length}
+      </div>
+      <div className="hc-grid">
+        {round.tiles.map((tile) => {
+          const isOpen = opened.includes(tile.id);
+          const hasFood = tile.id === round.foodTile;
           return (
             <button
-              key={`${round.prompt}-${card.id}`}
+              key={`${roundIndex}-${tile.id}`}
               type="button"
-              className={`hidden-card ${isOpen ? 'is-open' : ''} ${isOpen && isTarget ? 'is-found' : ''}`}
-              style={{ '--card-color': card.color }}
-              data-item={card.food ? card.food.id : 'empty'}
-              aria-label={isOpen ? card.food?.name || 'empty' : 'card'}
-              onClick={() => open(card)}
+              className={`hc-tile ${isOpen ? 'is-open' : ''} ${isOpen && hasFood ? 'is-found' : ''}`}
+              style={{ '--tile': tile.color.hex }}
+              data-color={tile.color.name}
+              data-food={hasFood ? round.food.id : 'empty'}
+              aria-label={isOpen ? (hasFood ? round.food.name : 'empty') : tile.color.name}
+              aria-disabled={isOpen}
+              onClick={() => open(tile)}
             >
-              <span className="hidden-card-inner">
-                <span className="hidden-card-front" aria-hidden="true" />
-                <span className="hidden-card-back" aria-hidden="true">
-                  {card.food?.emoji || ''}
+              <span className="hc-cover" aria-hidden="true" />
+              {isOpen && hasFood && (
+                <span className="hc-food" aria-hidden="true">
+                  {round.food.emoji}
                 </span>
-              </span>
+              )}
             </button>
           );
         })}

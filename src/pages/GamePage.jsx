@@ -36,10 +36,10 @@ export default function GamePage({ game, onBack }) {
   const Game = game.Component || RoundGame;
 
   return (
-    <div className="page game-page" style={{ '--game': game.color }}>
+    <div className={`page game-page game-${game.id}`} style={{ '--game': game.color }}>
       <TopBar onBack={onBack} />
       <main className="game-area">
-        <Game game={game} onCorrect={onCorrect} onTryAgain={onTryAgain} />
+        <Game game={game} onCorrect={onCorrect} onTryAgain={onTryAgain} onBack={onBack} />
       </main>
       <Feedback message={message} />
     </div>
