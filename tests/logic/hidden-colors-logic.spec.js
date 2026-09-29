@@ -4,7 +4,9 @@ import { test, expect } from '@playwright/test';
 import { makeGame, makeTiles, TILE_COLORS } from '../../src/games/hidden-colors/engine.js';
 import { foods } from '../../src/data/foods.js';
 import { schoolObjects } from '../../src/data/schoolObjects.js';
+import { toys } from '../../src/data/toys.js';
 import { seededRandom } from '../../src/utils/random.js';
+import { readFileSync } from 'node:fs';
 
 function countOf(list) {
   const counts = {};
@@ -32,6 +34,14 @@ const CATEGORIES = [
       book: 1, scissors: 1, backpack: 1, ruler: 1,
     },
   },
+  {
+    name: 'toys',
+    items: toys,
+    expected: {
+      doll: 1, 'teddy-bear': 1, ball: 1, puzzle: 1, car: 1, kite: 1,
+      'video-game-console': 1, train: 1, bicycle: 1, scooter: 1, motorcycle: 1,
+    },
+  },
 ];
 
 test('food list: exactly the 11 foods', () => {
@@ -47,6 +57,27 @@ test('school list: exactly the 11 given entries, in order, with Window twice', (
   ]);
   for (const o of schoolObjects) expect(Boolean(o.emoji) !== Boolean(o.icon), o.id).toBe(true); // one picture each
   expect(schoolObjects.filter((o) => o.icon).map((o) => o.id)).toEqual(['eraser', 'glue']);
+});
+
+test('toys list: exactly the 11 given toys, in order, each once', () => {
+  expect(toys.map((t) => t.name)).toEqual([
+    'doll', 'teddy bear', 'ball', 'puzzle', 'car', 'kite', 'video game console', 'train', 'bicycle', 'scooter', 'motorcycle',
+  ]);
+  expect(new Set(toys.map((t) => t.id)).size).toBe(11);
+  expect(toys.filter((t) => t.icon).map((t) => t.id)).toEqual(['doll']);
+});
+
+test('every Hidden Colors item has exactly one valid picture: a real emoji or a registered SVG icon', () => {
+  // Names registered in ItemIcon's customIcons (an unknown icon name would render nothing).
+  const source = readFileSync(new URL('../../src/components/ItemIcon.jsx', import.meta.url), 'utf8');
+  const registered = [...source.match(/const customIcons = \{([^}]*)\}/)[1].matchAll(/(\w+):/g)].map((m) => m[1]);
+  for (const item of [...foods, ...schoolObjects, ...toys]) {
+    expect(Boolean(item.emoji) !== Boolean(item.icon), item.id).toBe(true);
+    if (item.icon) expect(registered, item.id).toContain(item.icon);
+    else expect(item.emoji, item.id).toMatch(/^\p{Extended_Pictographic}/u);
+  }
+  // Pictures differ inside each category.
+  for (const list of [foods, toys]) expect(new Set(list.map((i) => i.emoji || i.icon)).size).toBe(list.length);
 });
 
 test('makeTiles: 12 tiles, 6 colors, each exactly twice', () => {

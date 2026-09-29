@@ -23,6 +23,15 @@ const CATEGORIES = [
     },
     svgItems: ['eraser', 'glue'], // own drawings instead of emoji
   },
+  {
+    title: 'Hidden Colors (Toys)',
+    prompt: 'Find the toy!',
+    items: {
+      doll: 1, 'teddy-bear': 1, ball: 1, puzzle: 1, car: 1, kite: 1,
+      'video-game-console': 1, train: 1, bicycle: 1, scooter: 1, motorcycle: 1,
+    },
+    svgItems: ['doll'],
+  },
 ];
 
 const COLORS = ['yellow', 'red', 'blue', 'green', 'orange', 'pink'];

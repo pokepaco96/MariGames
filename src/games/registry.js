@@ -23,8 +23,9 @@ import findShape from './find-shape/index.jsx';
 import findFruit from './find-fruit/index.jsx';
 import hiddenColorsFood from './hidden-colors-food/index.js';
 import hiddenColorsSchool from './hidden-colors-school/index.js';
+import hiddenColorsToys from './hidden-colors-toys/index.js';
 
-export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool];
+export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool, hiddenColorsToys];
 
 export function getGame(id) {
   return games.find((g) => g.id === id) || null;

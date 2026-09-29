@@ -3,7 +3,7 @@
 Teacher Maria is a small website with simple, visual learning games **in English** for preschool children.
 
 - **Target age:** 3 to 5 years old
-- **Topics:** animals, colors, counting (1–5), shapes, fruits, food, school objects
+- **Topics:** animals, colors, counting (1–5), shapes, fruits, food, school objects, toys
 - Live: https://marigames.onrender.com (the repository, Render service and URL keep the technical name *marigames*)
 - Big buttons, very little text, spoken instructions, positive feedback only (no timers, no lives, no losing).
 - No login, no ads, no trackers, no personal data. Everything runs in the browser.
@@ -19,6 +19,7 @@ Teacher Maria is a small website with simple, visual learning games **in English
 | **Fruits** | "Find the apple" – apple, banana, orange, strawberry |
 | **Hidden Colors (Food)** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. When it is found the round stops (no timer) until the child taps the big → button. 11 rounds in random order (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), then a "Great job!" screen with **Play again** |
 | **Hidden Colors (School)** | Same game with "Find the object!" and school objects: door, window, pencil, pen, eraser, window, glue, book, scissors, backpack, ruler (window twice on purpose = 11 rounds). Eraser and glue are our own SVG drawings (no emoji exists) |
+| **Hidden Colors (Toys)** | Same game with "Find the toy!": doll, teddy bear, ball, puzzle, car, kite, video game console, train, bicycle, scooter, motorcycle (11 rounds). The doll is our own SVG drawing (🪆 is a nesting doll) |
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
@@ -55,7 +56,7 @@ Tests use [Playwright](https://playwright.dev) (dev dependency only):
 - `tests/logic/` – pure logic tests for the Hidden Colors engine (12 tiles, 2 of each color, exact item
   counts per category, randomization) using a seeded random generator, so they are deterministic.
 - `tests/*.spec.js` – browser tests that play every game on a small phone (320×568), a tablet (768×1024)
-  and a desktop (1280×800): right and wrong answers, stars, full 11-round games of both Hidden Colors categories, Play again,
+  and a desktop (1280×800): right and wrong answers, stars, full 11-round games of every Hidden Colors category, Play again,
   back to home, Sound On/Off, the 👂 button, layout (no horizontal scroll) and console errors.
 
 ```bash
@@ -85,10 +86,10 @@ src/
   config.js            # visible app name (Teacher Maria)
   components/          # shared UI: TopBar, RoundGame, ChoiceButton, Feedback, ItemIcon, icons/ ...
   context/             # GameContext: stars + sound on/off
-  data/                # vocabulary: animals, colors, shapes, fruits, foods, school objects, feedback words
+  data/                # vocabulary: animals, colors, shapes, fruits, foods, school objects, toys, feedback words
   games/               # one folder per game + registry.js
                        #   hidden-colors/ = shared Hidden Colors engine (engine.js = pure, testable logic)
-                       #   hidden-colors-food/, hidden-colors-school/ = categories
+                       #   hidden-colors-food/, hidden-colors-school/, hidden-colors-toys/ = categories
   pages/               # Home and GamePage
   styles/              # global.css
   utils/               # random helpers, sound/speech

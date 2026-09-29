@@ -16,15 +16,15 @@ const targets = {
   Fruits: async (page) => (await page.locator('.prompt-text').innerText()).replace('Find the ', '').trim(),
 };
 
-test('home shows Teacher Maria, stars and seven big game cards', async ({ page }) => {
+test('home shows Teacher Maria, stars and eight big game cards', async ({ page }) => {
   await expect(page).toHaveTitle('Teacher Maria');
   await expect(page.locator('.logo')).toHaveText('Teacher Maria');
   await expect(page.getByText('MariGames')).toHaveCount(0);
   await expect(page.getByText("Let's play!")).toBeVisible();
   await expect(page.locator('.stars')).toContainText('0');
   const cards = page.locator('.game-card');
-  await expect(cards).toHaveCount(7);
-  for (const title of ['Count', 'Colors', 'Animals', 'Shapes', 'Fruits', 'Hidden Colors (Food)', 'Hidden Colors (School)']) {
+  await expect(cards).toHaveCount(8);
+  for (const title of ['Count', 'Colors', 'Animals', 'Shapes', 'Fruits', 'Hidden Colors (Food)', 'Hidden Colors (School)', 'Hidden Colors (Toys)']) {
     await expect(page.getByRole('button', { name: title, exact: true })).toBeVisible();
   }
   const box = await cards.first().boundingBox();
