@@ -16,6 +16,7 @@ MariGames is a small website with simple, visual learning games **in English** f
 | **Animals** | "Find the dog" / "Where is the cow?" – tap the right animal |
 | **Shapes** | "Find the circle" – circle, square, triangle, star |
 | **Fruits** | "Find the apple" – apple, banana, orange, strawberry |
+| **Hidden Colors** | "Find the banana" – foods hide behind big colored cards; tap cards to flip them until you find it (6 cards, then 8) |
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
@@ -28,6 +29,8 @@ The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
 - Web Audio API for sound effects, Speech Synthesis API for spoken words
 
 ## Run locally
+
+Requires **Node.js 24 LTS** (pinned in `.node-version` and `package.json` `engines`).
 
 ```bash
 npm install
@@ -43,6 +46,19 @@ npm run build     # outputs the static site to dist/
 npm run preview   # serves dist/ locally
 ```
 
+## Tests
+
+End-to-end tests use [Playwright](https://playwright.dev) (dev dependency only) and play every game
+on a small phone (320×568), a tablet (768×1024) and a desktop (1280×800): right and wrong answers,
+stars, back to home, Sound On/Off, the 👂 button and console errors.
+
+```bash
+npx playwright install chromium   # first time only
+npm run test:e2e                  # builds, serves dist/ and runs the tests
+```
+
+To test the deployed site instead (PowerShell): `$env:BASE_URL="https://marigames.onrender.com"; npm run test:e2e`
+
 ## Deploy
 
 Deployed on [Render](https://render.com) as a **Static Site**:
@@ -50,6 +66,7 @@ Deployed on [Render](https://render.com) as a **Static Site**:
 - Build command: `npm install && npm run build`
 - Publish directory: `dist`
 - Branch: `main` (auto-deploy on push)
+- Node.js: 24 (Render reads `.node-version`)
 
 `render.yaml` documents the same settings.
 
@@ -67,6 +84,7 @@ src/
   styles/              # global.css
   utils/               # random helpers, sound/speech
   assets/              # future images/audio
+tests/                 # Playwright end-to-end tests
 ```
 
 ## Adding a game

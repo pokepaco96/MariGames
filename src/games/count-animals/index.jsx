@@ -14,7 +14,7 @@ function answerChoices(count) {
 export default {
   id: 'count-animals',
   title: 'Count',
-  icon: '🐱🐱🐱',
+  icon: '🔢',
   color: '#ff8a65',
   makeRound(previous) {
     const animal = pickDifferent(animals, previous?.animal);

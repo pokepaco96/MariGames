@@ -11,14 +11,16 @@
 //     makeRound(previous) {...}  // returns one round (see components/RoundGame.jsx)
 //   }
 // Games that need a different mechanic (memory, puzzles...) can export
-// `Component` instead of `makeRound`; it receives { onCorrect, onTryAgain }.
+// `Component` instead of `makeRound`; it receives { game, onCorrect, onTryAgain }
+// (see hidden-colors/ for an example).
 import countAnimals from './count-animals/index.jsx';
 import findColor from './find-color/index.jsx';
 import findAnimal from './find-animal/index.jsx';
 import findShape from './find-shape/index.jsx';
 import findFruit from './find-fruit/index.jsx';
+import hiddenColors from './hidden-colors/index.jsx';
 
-export const games = [countAnimals, findColor, findAnimal, findShape, findFruit];
+export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColors];
 
 export function getGame(id) {
   return games.find((g) => g.id === id) || null;
