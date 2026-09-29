@@ -1,9 +1,10 @@
-# MariGames
+# Teacher Maria
 
-MariGames is a small website with simple, visual learning games **in English** for preschool children.
+Teacher Maria is a small website with simple, visual learning games **in English** for preschool children.
 
 - **Target age:** 3 to 5 years old
-- **Topics:** animals, colors, counting (1–5), shapes, fruits
+- **Topics:** animals, colors, counting (1–5), shapes, fruits, food, school objects
+- Live: https://marigames.onrender.com (the repository, Render service and URL keep the technical name *marigames*)
 - Big buttons, very little text, spoken instructions, positive feedback only (no timers, no lives, no losing).
 - No login, no ads, no trackers, no personal data. Everything runs in the browser.
 
@@ -16,7 +17,8 @@ MariGames is a small website with simple, visual learning games **in English** f
 | **Animals** | "Find the dog" / "Where is the cow?" – tap the right animal |
 | **Shapes** | "Find the circle" – circle, square, triangle, star |
 | **Fruits** | "Find the apple" – apple, banana, orange, strawberry |
-| **Hidden Colors** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. When the food is found the round stops (no timer) until the child taps the big → button. 11 rounds, one per food (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), in random order, then a "Great job!" screen with **Play again** |
+| **Hidden Colors (Food)** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. When it is found the round stops (no timer) until the child taps the big → button. 11 rounds in random order (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), then a "Great job!" screen with **Play again** |
+| **Hidden Colors (School)** | Same game with "Find the object!" and school objects: door, window, pencil, pen, eraser, window, glue, book, scissors, backpack, ruler (window twice on purpose = 11 rounds). Eraser and glue are our own SVG drawings (no emoji exists) |
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
@@ -50,10 +52,10 @@ npm run preview   # serves dist/ locally
 
 Tests use [Playwright](https://playwright.dev) (dev dependency only):
 
-- `tests/logic/` – pure logic tests for Hidden Colors (12 tiles, 2 of each color, 11 foods once each,
-  randomization) using a seeded random generator, so they are deterministic.
+- `tests/logic/` – pure logic tests for the Hidden Colors engine (12 tiles, 2 of each color, exact item
+  counts per category, randomization) using a seeded random generator, so they are deterministic.
 - `tests/*.spec.js` – browser tests that play every game on a small phone (320×568), a tablet (768×1024)
-  and a desktop (1280×800): right and wrong answers, stars, a full 11-round Hidden Colors game, Play again,
+  and a desktop (1280×800): right and wrong answers, stars, full 11-round games of both Hidden Colors categories, Play again,
   back to home, Sound On/Off, the 👂 button, layout (no horizontal scroll) and console errors.
 
 ```bash
@@ -80,11 +82,13 @@ Deployed on [Render](https://render.com) as a **Static Site**:
 src/
   App.jsx              # switches between Home and a game
   main.jsx             # entry point
-  components/          # shared UI: TopBar, RoundGame, ChoiceButton, Feedback, ...
+  config.js            # visible app name (Teacher Maria)
+  components/          # shared UI: TopBar, RoundGame, ChoiceButton, Feedback, ItemIcon, icons/ ...
   context/             # GameContext: stars + sound on/off
-  data/                # vocabulary: animals, colors, shapes, fruits, foods, feedback words
+  data/                # vocabulary: animals, colors, shapes, fruits, foods, school objects, feedback words
   games/               # one folder per game + registry.js
-                       #   hidden-colors/game.js = pure round/random logic (testable)
+                       #   hidden-colors/ = shared Hidden Colors engine (engine.js = pure, testable logic)
+                       #   hidden-colors-food/, hidden-colors-school/ = categories
   pages/               # Home and GamePage
   styles/              # global.css
   utils/               # random helpers, sound/speech
@@ -96,7 +100,28 @@ tests/                 # Playwright end-to-end tests
 
 1. Create `src/games/<my-game>/index.jsx` exporting `{ id, title, icon, color, makeRound }`.
    `makeRound(previousRound)` returns `{ prompt, say, scene?, options: [{ id, content, label, say, correct }] }`.
-   (For a different mechanic, like a memory game, export `Component` instead; it receives `onCorrect` and `onTryAgain`.)
+   (For a different mechanic, like a memory game, export `Component` instead; it receives `game`, `onCorrect`, `onTryAgain` and `onBack`.)
 2. Add it to the list in `src/games/registry.js`.
 
 That's it — the home card, stars, sound and feedback work automatically.
+
+## Adding a Hidden Colors category
+
+Add the items to `src/data/` (`{ id, name, emoji }`, or `{ id, name, icon }` for an own SVG drawing registered
+in `src/components/ItemIcon.jsx`), then create `src/games/hidden-colors-<category>/index.js`:
+
+```js
+import { createHiddenColorsGame } from '../hidden-colors/createHiddenColorsGame.js';
+import { toys } from '../../data/toys.js';
+
+export default createHiddenColorsGame({
+  id: 'hidden-colors-toys',
+  title: 'Hidden Colors (Toys)',
+  icon: '🧸',
+  color: '#A4D4C9',
+  prompt: 'Find the toy!',
+  items: toys, // one round per entry
+});
+```
+
+and add it to `src/games/registry.js`.

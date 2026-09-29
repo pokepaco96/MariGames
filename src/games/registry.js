@@ -11,17 +11,20 @@
 //     makeRound(previous) {...}  // returns one round (see components/RoundGame.jsx)
 //   }
 // Games that need a different mechanic (memory, puzzles...) can export
-// `Component` instead of `makeRound`; it receives { game, onCorrect, onTryAgain, onBack }
-// (see hidden-colors/ for an example). `onCorrect()` returns the praise text; set
-// `inlineFeedback: true` to show it inside the game instead of the floating message.
+// `Component` instead of `makeRound`; it receives { game, onCorrect, onTryAgain, onBack }.
+// `onCorrect()` returns the praise text; set `inlineFeedback: true` to show it inside
+// the game instead of the floating message.
+//
+// Hidden Colors categories are one call to createHiddenColorsGame() (see hidden-colors-food/).
 import countAnimals from './count-animals/index.jsx';
 import findColor from './find-color/index.jsx';
 import findAnimal from './find-animal/index.jsx';
 import findShape from './find-shape/index.jsx';
 import findFruit from './find-fruit/index.jsx';
-import hiddenColors from './hidden-colors/index.jsx';
+import hiddenColorsFood from './hidden-colors-food/index.js';
+import hiddenColorsSchool from './hidden-colors-school/index.js';
 
-export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColors];
+export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool];
 
 export function getGame(id) {
   return games.find((g) => g.id === id) || null;

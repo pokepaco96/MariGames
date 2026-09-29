@@ -10,6 +10,15 @@ export function setupPage() {
     await page.addInitScript(() => {
       window.addEventListener('unhandledrejection', (e) => console.error(`unhandledrejection: ${e.reason}`));
       window.__spoken = [];
+      // Count sound effects (Web Audio tones) too.
+      window.__tones = 0;
+      if (window.OscillatorNode) {
+        const start = OscillatorNode.prototype.start;
+        OscillatorNode.prototype.start = function (...args) {
+          window.__tones++;
+          return start.apply(this, args);
+        };
+      }
       if ('speechSynthesis' in window) {
         window.speechSynthesis.speak = (u) => window.__spoken.push(u.text);
         window.speechSynthesis.cancel = () => {};
@@ -23,6 +32,7 @@ export function setupPage() {
 }
 
 export const spoken = (page) => page.evaluate(() => window.__spoken);
+export const tones = (page) => page.evaluate(() => window.__tones);
 
 // force: tap even if the element says it is disabled (to check that nothing happens).
 export function press(locator, testInfo, options = {}) {

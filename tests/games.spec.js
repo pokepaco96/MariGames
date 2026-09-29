@@ -16,22 +16,36 @@ const targets = {
   Fruits: async (page) => (await page.locator('.prompt-text').innerText()).replace('Find the ', '').trim(),
 };
 
-test('home shows logo, stars and six big game cards', async ({ page }) => {
-  await expect(page.locator('.logo')).toHaveText('MariGames');
+test('home shows Teacher Maria, stars and seven big game cards', async ({ page }) => {
+  await expect(page).toHaveTitle('Teacher Maria');
+  await expect(page.locator('.logo')).toHaveText('Teacher Maria');
+  await expect(page.getByText('MariGames')).toHaveCount(0);
   await expect(page.getByText("Let's play!")).toBeVisible();
   await expect(page.locator('.stars')).toContainText('0');
   const cards = page.locator('.game-card');
-  await expect(cards).toHaveCount(6);
-  for (const title of ['Count', 'Colors', 'Animals', 'Shapes', 'Fruits', 'Hidden Colors']) {
+  await expect(cards).toHaveCount(7);
+  for (const title of ['Count', 'Colors', 'Animals', 'Shapes', 'Fruits', 'Hidden Colors (Food)', 'Hidden Colors (School)']) {
     await expect(page.getByRole('button', { name: title, exact: true })).toBeVisible();
   }
   const box = await cards.first().boundingBox();
   expect(box.height).toBeGreaterThanOrEqual(150);
-  // Icons must fit inside their card.
+  // Icons and titles must fit inside their card; the logo must fit the screen.
   const overflowing = await page.$$eval('.game-card', (els) =>
-    els.filter((el) => el.querySelector('.game-card-icon').scrollWidth > el.clientWidth).length
+    els.filter((el) =>
+      ['.game-card-icon', '.game-card-title'].some((s) => {
+        const r = el.querySelector(s).getBoundingClientRect();
+        const c = el.getBoundingClientRect();
+        return r.left < c.left || r.right > c.right || el.querySelector(s).scrollWidth > el.clientWidth;
+      })
+    ).length
   );
   expect(overflowing).toBe(0);
+  const logo = await page.locator('.logo').evaluate((el) => {
+    const letters = [...el.querySelectorAll('.logo-letter')].map((s) => s.getBoundingClientRect());
+    return { left: Math.min(...letters.map((r) => r.left)), right: Math.max(...letters.map((r) => r.right)) };
+  });
+  expect(logo.left).toBeGreaterThanOrEqual(0);
+  expect(logo.right).toBeLessThanOrEqual(page.viewportSize().width);
   await expectNoHorizontalScroll(page);
 });
 

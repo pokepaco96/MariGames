@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
+import ItemIcon from '../../components/ItemIcon.jsx';
 import SpeakButton from '../../components/SpeakButton.jsx';
 import { useGame } from '../../context/GameContext.jsx';
 import { speak } from '../../utils/sound.js';
-import { PROMPT, makeGame } from './game.js';
+import { makeGame } from './engine.js';
 
-// 12 colored tiles, one hides a food. Tapped tiles disappear until the food is found.
+// Shared Hidden Colors game (see createHiddenColorsGame.js for categories).
+// 12 colored tiles, one hides the round's item. Tapped tiles disappear until it is found.
 // Then the round waits (no timer) until the child taps the big → button.
-// 11 rounds (one per food), then a "Play again" screen.
-export default function HiddenColors({ onCorrect, onBack }) {
+// One round per item, then a "Play again" screen.
+export default function HiddenColors({ game, onCorrect, onBack }) {
+  const { prompt, items } = game;
   const { stars } = useGame();
-  const [rounds, setRounds] = useState(() => makeGame());
+  const [rounds, setRounds] = useState(() => makeGame(items));
   const [roundIndex, setRoundIndex] = useState(0);
   const [opened, setOpened] = useState([]);
   const [praise, setPraise] = useState(null); // set = round completed, waiting for →
@@ -20,15 +23,15 @@ export default function HiddenColors({ onCorrect, onBack }) {
   const roundCompleted = praise !== null;
 
   useEffect(() => {
-    const text = finished ? 'Great job! You found them all!' : PROMPT;
+    const text = finished ? 'Great job! You found them all!' : prompt;
     const t = setTimeout(() => speak(text), finished ? 900 : 350);
     return () => clearTimeout(t);
-  }, [roundIndex, rounds, finished]);
+  }, [roundIndex, rounds, finished, prompt]);
 
   const open = (tile) => {
     if (roundCompleted || opened.includes(tile.id)) return;
     setOpened((ids) => [...ids, tile.id]);
-    if (tile.id === round.foodTile) setPraise(onCorrect());
+    if (tile.id === round.itemTile) setPraise(onCorrect());
   };
 
   const next = () => {
@@ -38,7 +41,7 @@ export default function HiddenColors({ onCorrect, onBack }) {
   };
 
   const playAgain = () => {
-    setRounds(makeGame());
+    setRounds(makeGame(items));
     setRoundIndex(0);
     setStartStars(stars);
   };
@@ -81,8 +84,8 @@ export default function HiddenColors({ onCorrect, onBack }) {
         </div>
       ) : (
         <div className="prompt">
-          <h1 className="prompt-text">{PROMPT}</h1>
-          <SpeakButton text={PROMPT} />
+          <h1 className="prompt-text">{prompt}</h1>
+          <SpeakButton text={prompt} />
         </div>
       )}
       <div className="hc-progress" aria-label={`Round ${roundIndex + 1} of ${rounds.length}`}>
@@ -91,23 +94,23 @@ export default function HiddenColors({ onCorrect, onBack }) {
       <div className={`hc-grid ${roundCompleted ? 'is-locked' : ''}`}>
         {round.tiles.map((tile) => {
           const isOpen = opened.includes(tile.id);
-          const hasFood = tile.id === round.foodTile;
+          const hasItem = tile.id === round.itemTile;
           return (
             <button
               key={`${roundIndex}-${tile.id}`}
               type="button"
-              className={`hc-tile ${isOpen ? 'is-open' : ''} ${isOpen && hasFood ? 'is-found' : ''}`}
+              className={`hc-tile ${isOpen ? 'is-open' : ''} ${isOpen && hasItem ? 'is-found' : ''}`}
               style={{ '--tile': tile.color.hex }}
               data-color={tile.color.name}
-              data-food={hasFood ? round.food.id : 'empty'}
-              aria-label={isOpen ? (hasFood ? round.food.name : 'empty') : tile.color.name}
+              data-item={hasItem ? round.item.id : 'empty'}
+              aria-label={isOpen ? (hasItem ? round.item.name : 'empty') : tile.color.name}
               aria-disabled={isOpen || roundCompleted}
               onClick={() => open(tile)}
             >
               <span className="hc-cover" aria-hidden="true" />
-              {isOpen && hasFood && (
-                <span className="hc-food" aria-hidden="true">
-                  {round.food.emoji}
+              {isOpen && hasItem && (
+                <span className="hc-item" aria-hidden="true">
+                  <ItemIcon item={round.item} />
                 </span>
               )}
             </button>

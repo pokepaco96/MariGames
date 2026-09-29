@@ -86,7 +86,8 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   line-height: 1;
   letter-spacing: 1px;
 }
-.logo span {
+.logo-word { display: inline-block; white-space: nowrap; }
+.logo-letter {
   display: inline-block;
   color: hsl(calc(var(--i) * 40), 75%, 52%);
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
@@ -307,7 +308,7 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
 .hc-tile.is-open { cursor: default; }
 .hc-tile.is-open .hc-cover { opacity: 0; transform: scale(0.9); pointer-events: none; }
 .hc-tile.is-found { box-shadow: inset 0 0 0 5px var(--yes); }
-.hc-food {
+.hc-item {
   position: absolute;
   inset: 0;
   display: grid;
@@ -317,6 +318,7 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   animation: pop-in 0.45s ease-out both;
 }
 
+.item-svg { display: block; width: 1.1em; height: 1.1em; } /* own drawings: about as big as the emoji */
 .hc-grid.is-locked .hc-tile { cursor: default; }
 .hc-grid.is-locked .hc-tile:not(.is-open):active .hc-cover { transform: none; }
 
@@ -385,7 +387,7 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   .prompt-text { font-size: 24px; padding: 6px 14px; }
   .speak-btn { width: 52px; height: 52px; font-size: 28px; }
   .prompt { gap: 8px; }
-  .game-hidden-colors .prompt { flex-wrap: nowrap; }
+  .hc-round .prompt { flex-wrap: nowrap; }
   .round { gap: 12px; padding: 8px 0; }
   .hc-progress { font-size: 24px; }
   .feedback { padding: 12px 24px; }
