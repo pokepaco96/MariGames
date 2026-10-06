@@ -7,7 +7,8 @@ Teacher Maria is a small website with simple, visual learning games **in English
 - Live: https://marigames.onrender.com (the repository, Render service and URL keep the technical name *marigames*)
 - Big buttons, very little text, spoken instructions, positive feedback only (no timers, no lives, no losing).
 - No login, no ads, no trackers, no personal data. Everything runs in the browser.
-- Plus a classroom tool for the teacher: the **Noise Meter** (a noise traffic light).
+- Home has two sections: **Teacher Tools** at the top (the **Noise Meter**, a noise traffic light)
+  and **Games** (the educational games) below.
 
 ## Games
 
@@ -22,9 +23,9 @@ Teacher Maria is a small website with simple, visual learning games **in English
 | **Hidden Colors (School)** | Same game with "Find the object!" and school objects: door, window, pencil, pen, eraser, window, glue, book, scissors, backpack, ruler (window twice on purpose = 11 rounds). Eraser and glue are our own SVG drawings (no emoji exists) |
 | **Hidden Colors (Toys)** | Same game with "Find the toy!": doll, teddy bear, ball, puzzle, car, kite, video game console, train, bicycle, scooter, motorcycle (11 rounds). The doll is our own SVG drawing (🪆 is a nesting doll) |
 
-## Classroom tool: Noise Meter
+## Teacher Tools: Noise Meter
 
-**Noise Meter** (🚦 on the home screen) is a noise traffic light to project on the board:
+**Noise Meter** (the wide 🚦 card under *Teacher Tools* at the top of Home) is a noise traffic light to project on the board:
 **green = Quiet**, **yellow = Getting loud**, **red = Too loud!**, with a relative *Noise level* bar (0–100 %).
 
 - It uses the device **microphone**, so the browser asks for **permission** (works on HTTPS or localhost).

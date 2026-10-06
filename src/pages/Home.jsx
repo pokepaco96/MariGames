@@ -1,6 +1,7 @@
 import TopBar from '../components/TopBar.jsx';
 import GameCard from '../components/GameCard.jsx';
-import { games } from '../games/registry.js';
+import ToolCard from '../components/ToolCard.jsx';
+import { games, getGame, tools } from '../games/registry.js';
 import { speak } from '../utils/sound.js';
 import { APP_NAME } from '../config.js';
 
@@ -28,7 +29,7 @@ function Logo() {
 
 export default function Home({ onSelect }) {
   const select = (id) => {
-    speak(games.find((g) => g.id === id).title);
+    speak(getGame(id).title);
     onSelect(id);
   };
   return (
@@ -38,10 +39,29 @@ export default function Home({ onSelect }) {
         <Logo />
         <p className="tagline">Let's play!</p>
       </div>
-      <main className="game-grid">
-        {games.map((g) => (
-          <GameCard key={g.id} game={g} onSelect={select} />
-        ))}
+      <main>
+        {tools.length > 0 && (
+          <section className="home-section tools-section" aria-labelledby="tools-title">
+            <h2 className="section-title" id="tools-title">
+              <span aria-hidden="true">🍎</span> Teacher Tools
+            </h2>
+            <div className="tools-grid">
+              {tools.map((t) => (
+                <ToolCard key={t.id} tool={t} onSelect={select} />
+              ))}
+            </div>
+          </section>
+        )}
+        <section className="home-section games-section" aria-labelledby="games-title">
+          <h2 className="section-title" id="games-title">
+            <span aria-hidden="true">🎈</span> Games
+          </h2>
+          <div className="game-grid">
+            {games.map((g) => (
+              <GameCard key={g.id} game={g} onSelect={select} />
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );

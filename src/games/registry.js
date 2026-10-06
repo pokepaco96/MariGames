@@ -8,6 +8,7 @@
 //     title: 'Animals',          // short name on the home card
 //     icon: '🐶',                // big picture on the home card
 //     color: '#ffb74d',          // card color
+//     type: 'game',              // optional: 'game' (default) or 'tool' (see below)
 //     makeRound(previous) {...}  // returns one round (see components/RoundGame.jsx)
 //   }
 // Games that need a different mechanic (memory, puzzles...) can export
@@ -16,7 +17,8 @@
 // the game instead of the floating message.
 //
 // Hidden Colors categories are one call to createHiddenColorsGame() (see hidden-colors-food/).
-// Classroom tools for the teacher (e.g. noise-meter/) use the same `Component` pattern.
+// Classroom tools for the teacher (e.g. noise-meter/) use the same `Component` pattern
+// with `type: 'tool'` and a short `description`; Home shows them first, as "Teacher Tools".
 import countAnimals from './count-animals/index.jsx';
 import findColor from './find-color/index.jsx';
 import findAnimal from './find-animal/index.jsx';
@@ -27,8 +29,14 @@ import hiddenColorsSchool from './hidden-colors-school/index.js';
 import hiddenColorsToys from './hidden-colors-toys/index.js';
 import noiseMeter from './noise-meter/index.js';
 
-export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool, hiddenColorsToys, noiseMeter];
+// Everything that can be opened from Home (games keep this order on screen).
+const entries = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool, hiddenColorsToys, noiseMeter];
 
+const isTool = (entry) => entry.type === 'tool';
+export const tools = entries.filter(isTool);
+export const games = entries.filter((entry) => !isTool(entry));
+
+// Finds a game or a tool by id.
 export function getGame(id) {
-  return games.find((g) => g.id === id) || null;
+  return entries.find((g) => g.id === id) || null;
 }
