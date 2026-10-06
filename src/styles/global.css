@@ -396,3 +396,124 @@ button:focus-visible { outline: 5px solid #1e88e5; outline-offset: 4px; }
   .hc-round .prompt { min-height: 60px; }
   .hc-next svg { width: 40px; height: 40px; }
 }
+
+/* ---------- Noise Meter (classroom tool) ---------- */
+.noise-meter {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  text-align: center;
+}
+.nm-title { margin: 0; font-size: clamp(26px, 5vw, 44px); line-height: 1.1; }
+.nm-panel {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px clamp(16px, 4vw, 40px);
+  max-width: 640px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.nm-big-icon { font-size: clamp(72px, 16vw, 120px); line-height: 1; }
+.nm-text { margin: 0; font-size: clamp(20px, 3.5vw, 28px); font-weight: 600; }
+.nm-message-title { margin: 0; font-size: clamp(26px, 5vw, 38px); line-height: 1.15; }
+.big-btn:disabled { opacity: 0.6; cursor: default; }
+.noise-meter .big-btn { white-space: normal; }
+
+.nm-progress {
+  width: 100%;
+  height: 28px;
+  border-radius: 999px;
+  background: #efe6cc;
+  overflow: hidden;
+}
+.nm-progress span { display: block; height: 100%; background: #4A90E2; transition: width 0.1s linear; }
+
+.nm-active {
+  width: 100%;
+  display: grid;
+  gap: clamp(16px, 3vw, 40px);
+  justify-items: center;
+  align-items: center;
+}
+@media (min-width: 900px) and (orientation: landscape) {
+  .nm-active { grid-template-columns: auto minmax(320px, 460px); justify-content: center; }
+}
+.nm-light {
+  --zone: #43A047;
+  width: min(84vw, 58vh, 640px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--zone);
+  border: 10px solid var(--white);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.15), 0 0 60px color-mix(in srgb, var(--zone) 60%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  container-type: inline-size;
+  color: var(--ink);
+  transition: background-color 0.6s ease, box-shadow 0.6s ease;
+}
+.nm-light[data-zone='yellow'] { --zone: #F6C945; }
+.nm-light[data-zone='red'] { --zone: #E74C3C; }
+.nm-face { font-size: 34cqi; line-height: 1; }
+.nm-label { font-size: 11cqi; font-weight: 800; line-height: 1.1; margin-top: 2cqi; }
+
+.nm-side { width: 100%; max-width: 460px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.nm-hint { margin: 0; font-size: clamp(24px, 4vw, 36px); font-weight: 800; }
+.nm-lamps {
+  display: flex;
+  gap: 14px;
+  background: #2b2d42;
+  padding: 10px 16px;
+  border-radius: 999px;
+}
+.nm-lamp { width: 44px; height: 44px; border-radius: 50%; opacity: 0.25; transition: opacity 0.4s ease, box-shadow 0.4s ease; }
+.nm-lamp-green { background: #43A047; }
+.nm-lamp-yellow { background: #F6C945; }
+.nm-lamp-red { background: #E74C3C; }
+.nm-lamp.is-lit { opacity: 1; box-shadow: 0 0 18px currentColor, 0 0 0 4px var(--white); }
+.nm-lamp-green.is-lit { color: #43A047; }
+.nm-lamp-yellow.is-lit { color: #F6C945; }
+.nm-lamp-red.is-lit { color: #E74C3C; }
+
+.nm-level { width: 100%; }
+.nm-level-head { display: flex; justify-content: space-between; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.nm-bar {
+  --zone: #43A047;
+  position: relative;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: inset 0 0 0 3px #efe6cc;
+  overflow: hidden;
+}
+.nm-bar[data-zone='yellow'] { --zone: #F6C945; }
+.nm-bar[data-zone='red'] { --zone: #E74C3C; }
+.nm-bar-fill { position: absolute; inset: 0 auto 0 0; background: var(--zone); transition: width 0.1s linear, background-color 0.6s ease; }
+.nm-mark { position: absolute; top: 0; bottom: 0; width: 4px; margin-left: -2px; }
+.nm-mark-yellow { background: #b8860b; }
+.nm-mark-red { background: #b71c1c; }
+
+.nm-done {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--yes);
+  background: var(--white);
+  border-radius: 999px;
+  padding: 4px 18px;
+}
+.nm-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.nm-btn { background: var(--white); border: 4px solid var(--ink); font-size: clamp(22px, 4vw, 28px); min-height: 72px; padding: 8px 22px; }
+.nm-btn-stop { background: #ffe0dc; }
+.nm-footer { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: auto; }
+.nm-small { margin: 0; font-size: 16px; font-weight: 600; opacity: 0.85; max-width: 560px; }

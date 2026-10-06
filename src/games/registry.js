@@ -16,6 +16,7 @@
 // the game instead of the floating message.
 //
 // Hidden Colors categories are one call to createHiddenColorsGame() (see hidden-colors-food/).
+// Classroom tools for the teacher (e.g. noise-meter/) use the same `Component` pattern.
 import countAnimals from './count-animals/index.jsx';
 import findColor from './find-color/index.jsx';
 import findAnimal from './find-animal/index.jsx';
@@ -24,8 +25,9 @@ import findFruit from './find-fruit/index.jsx';
 import hiddenColorsFood from './hidden-colors-food/index.js';
 import hiddenColorsSchool from './hidden-colors-school/index.js';
 import hiddenColorsToys from './hidden-colors-toys/index.js';
+import noiseMeter from './noise-meter/index.js';
 
-export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool, hiddenColorsToys];
+export const games = [countAnimals, findColor, findAnimal, findShape, findFruit, hiddenColorsFood, hiddenColorsSchool, hiddenColorsToys, noiseMeter];
 
 export function getGame(id) {
   return games.find((g) => g.id === id) || null;

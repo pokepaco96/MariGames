@@ -7,6 +7,7 @@ Teacher Maria is a small website with simple, visual learning games **in English
 - Live: https://marigames.onrender.com (the repository, Render service and URL keep the technical name *marigames*)
 - Big buttons, very little text, spoken instructions, positive feedback only (no timers, no lives, no losing).
 - No login, no ads, no trackers, no personal data. Everything runs in the browser.
+- Plus a classroom tool for the teacher: the **Noise Meter** (a noise traffic light).
 
 ## Games
 
@@ -20,6 +21,21 @@ Teacher Maria is a small website with simple, visual learning games **in English
 | **Hidden Colors (Food)** | "Find the food!" – 12 colored squares (2 of each of 6 colors), one hides a food; tapped squares disappear. When it is found the round stops (no timer) until the child taps the big → button. 11 rounds in random order (banana, ice cream, tomato, spaghetti, salad, popcorn, cookie, broccoli, orange juice, cereal, soup), then a "Great job!" screen with **Play again** |
 | **Hidden Colors (School)** | Same game with "Find the object!" and school objects: door, window, pencil, pen, eraser, window, glue, book, scissors, backpack, ruler (window twice on purpose = 11 rounds). Eraser and glue are our own SVG drawings (no emoji exists) |
 | **Hidden Colors (Toys)** | Same game with "Find the toy!": doll, teddy bear, ball, puzzle, car, kite, video game console, train, bicycle, scooter, motorcycle (11 rounds). The doll is our own SVG drawing (🪆 is a nesting doll) |
+
+## Classroom tool: Noise Meter
+
+**Noise Meter** (🚦 on the home screen) is a noise traffic light to project on the board:
+**green = Quiet**, **yellow = Getting loud**, **red = Too loud!**, with a relative *Noise level* bar (0–100 %).
+
+- It uses the device **microphone**, so the browser asks for **permission** (works on HTTPS or localhost).
+- The level is measured **locally in the browser** (Web Audio API). **No audio is recorded, stored or sent** anywhere.
+  The microphone only turns on after pressing **Enable microphone**, and is released on **Stop microphone** or when leaving the screen.
+- It is a *relative* indicator for classroom management, **not a calibrated decibel meter**.
+- **Calibrate in each classroom/situation:** the first 3 seconds (stay quiet) set the baseline; yellow and red start
+  about 12 and 22 dB above it. Use **Recalibrate** whenever the room or the device changes.
+- The light is stable: the level is smoothed, zones need a short time to change (a single clap does not turn it red)
+  and there is hysteresis at the borders, so it does not flicker.
+- **Full screen** button for projection (works without it too). No sounds: the tool is visual only.
 
 Each correct answer adds a ⭐ (stars reset when the page is reloaded).
 The 🔊 button turns all sound on/off; the 👂 button repeats the instruction.
@@ -53,11 +69,15 @@ npm run preview   # serves dist/ locally
 
 Tests use [Playwright](https://playwright.dev) (dev dependency only):
 
-- `tests/logic/` – pure logic tests for the Hidden Colors engine (12 tiles, 2 of each color, exact item
+- `tests/logic/` – pure logic tests for the Noise Meter engine (levels, calibration, zones, smoothing,
+  hysteresis) and for the Hidden Colors engine (12 tiles, 2 of each color, exact item
   counts per category, randomization) using a seeded random generator, so they are deterministic.
 - `tests/*.spec.js` – browser tests that play every game on a small phone (320×568), a tablet (768×1024)
   and a desktop (1280×800): right and wrong answers, stars, full 11-round games of every Hidden Colors category, Play again,
   back to home, Sound On/Off, the 👂 button, layout (no horizontal scroll) and console errors.
+- `tests/noise-meter*.spec.js` – Noise Meter with a fake microphone (granted, denied, no microphone, unsupported,
+  green/yellow/red, calibration, Recalibrate, Stop, release on leaving, full screen) and one run through
+  Chromium's built-in fake microphone device (real `getUserMedia`).
 
 ```bash
 npx playwright install chromium   # first time only
